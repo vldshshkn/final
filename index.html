@@ -3,87 +3,82 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Волшебный Сейф</title>
   <style>
     @font-face {
-      font-family: 'DisneyPark';
+      font-family: 'Disney';
       src: url('ofont.ru_DisneyPark.ttf') format('truetype');
     }
 
     body {
       margin: 0;
       padding: 0;
-      font-family: 'DisneyPark', cursive;
-      background: url('BG.jpeg') no-repeat center center fixed;
+      background-image: url('BG.jpeg');
       background-size: cover;
+      background-position: center;
+      font-family: 'Disney', cursive;
+      color: white;
+      text-align: center;
     }
 
     h1 {
-      text-align: center;
-      font-size: 48px;
-      color: white;
+      font-size: 42px;
       margin-top: 40px;
     }
 
     .container {
       display: flex;
-      justify-content: center;
-      align-items: flex-start;
-      padding: 40px;
-      gap: 50px;
+      justify-content: space-around;
+      align-items: center;
+      margin-top: 40px;
+      flex-wrap: wrap;
     }
 
-    .prompt {
+    .puzzle {
       background-color: rgba(0, 0, 0, 0.5);
       padding: 30px;
       border-radius: 20px;
-      color: white;
-      font-size: 24px;
-      line-height: 1.7;
-      max-width: 600px;
+      max-width: 500px;
+      font-size: 22px;
+      line-height: 1.6;
     }
 
     .safe-container {
       position: relative;
     }
 
-    .safe-img {
-      width: 400px;
+    .safe-image {
+      width: 320px;
+      height: auto;
     }
 
-    .digit-container {
+    .inputs {
       position: absolute;
-      bottom: 30px;
+      bottom: 35px;
       left: 50%;
       transform: translateX(-50%);
       display: flex;
-      gap: 15px;
+      gap: 10px;
     }
 
-    input[type="number"] {
-      width: 60px;
-      height: 60px;
-      font-size: 28px;
-      text-align: center;
+    select {
+      font-size: 24px;
+      padding: 10px;
       border-radius: 10px;
-      border: 2px solid #ccc;
-      appearance: auto;
+      border: none;
+      appearance: none;
+      text-align: center;
     }
 
-    input::-webkit-inner-spin-button,
-    input::-webkit-outer-spin-button {
-      opacity: 1;
-      appearance: auto;
-    }
-
-    canvas.confetti-canvas {
+    .confetti-canvas {
       position: fixed;
-      pointer-events: none;
       top: 0;
       left: 0;
+      pointer-events: none;
       width: 100%;
       height: 100%;
-      z-index: 9999;
+      z-index: 1000;
     }
 
     audio {
@@ -92,80 +87,87 @@
   </style>
 </head>
 <body>
-  <h1>Ты молодец! Последний шаг!</h1>
-  <div class="container">
-    <div class="prompt">
-      <strong>Чтобы открыть сейф, ответь на 4 вопроса:</strong><br /><br />
-      1. Сколько раз ты купалась в Персидском заливе?<br />
-      2. Сколько персонажей было в фильме "Там, где мы были"?<br />
-      3. Сколько было комнат в домике на Новый год?<br />
-      4. Сколько татуировок у Владика? (фото смотреть нельзя!)
-    </div>
-    <div class="safe-container">
-      <img src="save.png" alt="Сейф" class="safe-img" />
-      <div class="digit-container">
-        <input type="number" min="0" max="9" id="d1" />
-        <input type="number" min="0" max="9" id="d2" />
-        <input type="number" min="0" max="9" id="d3" />
-        <input type="number" min="0" max="9" id="d4" />
-      </div>
+
+<h1>Ты молодец! Последний шаг!</h1>
+<div class="container">
+  <div class="puzzle">
+    <p><b>Чтобы открыть сейф, ответь на 4 вопроса:</b></p>
+    <p>1. Сколько раз ты купалась в Персидском заливе?</p>
+    <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
+    <p>3. Сколько было комнат в домике на Новый год?</p>
+    <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
+  </div>
+  <div class="safe-container">
+    <img src="save.png" class="safe-image" alt="Сейф"/>
+    <div class="inputs">
+      <select id="d1" onchange="checkCode()">
+        ${Array.from({ length: 10 }, (_, i) => `<option>${i}</option>`).join('')}
+      </select>
+      <select id="d2" onchange="checkCode()">
+        ${Array.from({ length: 10 }, (_, i) => `<option>${i}</option>`).join('')}
+      </select>
+      <select id="d3" onchange="checkCode()">
+        ${Array.from({ length: 10 }, (_, i) => `<option>${i}</option>`).join('')}
+      </select>
+      <select id="d4" onchange="checkCode()">
+        ${Array.from({ length: 10 }, (_, i) => `<option>${i}</option>`).join('')}
+      </select>
     </div>
   </div>
+</div>
 
-  <canvas class="confetti-canvas"></canvas>
-  <audio id="bg-music" src="background_music.mp3" loop></audio>
-  <audio id="victory-sound" src="victory_fanfare.mp3"></audio>
+<canvas class="confetti-canvas" id="confetti"></canvas>
 
-  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
-  <script>
-    const correctCode = ['2', '8', '5', '6'];
-    let bgStarted = false;
+<audio id="bg-music" src="background_music.mp3" loop></audio>
+<audio id="victory" src="victory_fanfare.mp3"></audio>
 
-    document.body.addEventListener('click', () => {
-      if (!bgStarted) {
-        document.getElementById('bg-music').play();
-        bgStarted = true;
-      }
-    });
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
+<script>
+  let code = ['2', '8', '5', '6'];
+  let musicStarted = false;
 
-    const inputs = ['d1', 'd2', 'd3', 'd4'].map(id => document.getElementById(id));
-
-    inputs.forEach(input => {
-      input.addEventListener('input', () => {
-        const enteredCode = inputs.map(i => i.value);
-        if (JSON.stringify(enteredCode) === JSON.stringify(correctCode)) {
-          document.getElementById('victory-sound').play();
-          confetti();
-          setTimeout(() => {
-            window.location.href = 'https://lera-birthday.com/win';
-          }, 3000);
-        }
-      });
-    });
-
-    function confetti() {
-      const duration = 2 * 1000;
-      const end = Date.now() + duration;
-      (function frame() {
-        confettiLib({
-          particleCount: 5,
-          angle: 60,
-          spread: 55,
-          origin: { x: 0 },
-        });
-        confettiLib({
-          particleCount: 5,
-          angle: 120,
-          spread: 55,
-          origin: { x: 1 },
-        });
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      })();
+  function checkCode() {
+    const val = [d1.value, d2.value, d3.value, d4.value];
+    if (val.join('') === code.join('')) {
+      document.getElementById('victory').play();
+      confetti();
+      setTimeout(() => {
+        window.location.href = "https://lera-birthday.com/win";
+      }, 3500);
     }
+  }
 
-    const confettiLib = window.confetti.create(document.querySelector(".confetti-canvas"), { resize: true });
-  </script>
+  function confetti() {
+    const duration = 2 * 1000;
+    const end = Date.now() + duration;
+    (function frame() {
+      confettiLib({
+        particleCount: 5,
+        angle: 60,
+        spread: 55,
+        origin: { x: 0 }
+      });
+      confettiLib({
+        particleCount: 5,
+        angle: 120,
+        spread: 55,
+        origin: { x: 1 }
+      });
+      if (Date.now() < end) {
+        requestAnimationFrame(frame);
+      }
+    })();
+  }
+
+  document.addEventListener('click', () => {
+    if (!musicStarted) {
+      document.getElementById('bg-music').play();
+      musicStarted = true;
+    }
+  });
+
+  const confettiLib = window.confetti;
+</script>
+
 </body>
 </html>
