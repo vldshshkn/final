@@ -5,121 +5,93 @@
     <meta charset="UTF-8">
     <title>Волшебный Сейф</title>
     <style>
-        @font-face {
-            font-family: 'Disney';
-            src: url('ofont.ru_DisneyPark.ttf') format('truetype');
-        }
         body {
             margin: 0;
-            padding: 0;
-            font-family: 'Disney', sans-serif;
+            font-family: 'DisneyPark', sans-serif;
             background: url('BG.jpeg') no-repeat center center fixed;
             background-size: cover;
         }
-        h1 {
-            text-align: center;
-            font-size: 48px;
-            color: white;
-            margin-top: 30px;
+        @font-face {
+            font-family: 'DisneyPark';
+            src: url('ofont.ru_DisneyPark.ttf') format('truetype');
         }
         .container {
             display: flex;
-            justify-content: space-around;
+            justify-content: space-between;
             align-items: center;
-            margin-top: 30px;
-            padding: 0 5%;
+            height: 100vh;
+            padding: 50px;
+            box-sizing: border-box;
         }
-        .questions {
+        .left-panel {
             background-color: rgba(0, 0, 0, 0.4);
-            padding: 25px;
-            border-radius: 30px;
+            border-radius: 25px;
+            padding: 30px;
             color: white;
             font-size: 24px;
-            line-height: 1.6;
+            width: 40%;
         }
-        .safe-container {
+        .title {
+            text-align: center;
+            font-size: 48px;
+            color: white;
+            margin-top: 20px;
+        }
+        .safe-area {
             position: relative;
+            width: 500px;
         }
-        .safe-image {
-            width: 400px;
+        .safe-img {
+            width: 100%;
+            height: auto;
         }
-        .code-inputs {
+        .digits {
             position: absolute;
-            top: 55%;
+            top: 50%;
             left: 50%;
             transform: translate(-50%, -50%);
             display: flex;
             gap: 10px;
         }
-        select {
-            font-size: 24px;
+        .digit-input {
+            width: 60px;
+            height: 60px;
+            font-size: 32px;
             text-align: center;
-            -moz-appearance: none;
-            -webkit-appearance: none;
-            appearance: none;
         }
     </style>
 </head>
 <body>
-    <audio id="bgMusic" src="BG_sound.mp3" loop></audio>
-    <audio id="victorySound" src="victory_sound.mp3"></audio>
+    <audio id="bg-music" src="BG_sound.mp3" loop></audio>
+    <audio id="victory-sound" src="victory_sound.mp3"></audio>
 
-    <h1>Ты молодец! Последний шаг!</h1>
+    <div class="title">Ты молодец! Последний шаг!</div>
     <div class="container">
-        <div class="questions">
-            Чтобы открыть сейф, ответь на 4 вопроса:<br><br>
-            1. Сколько раз ты купалась в Персидском заливе?<br>
-            2. Сколько персонажей было в фильме "Там, где мы были"?<br>
-            3. Сколько было комнат в домике на Новый год?<br>
-            4. Сколько татуировок у Владика? (фото смотреть нельзя!)
+        <div class="left-panel">
+            <p><b>Чтобы открыть сейф, ответь на 4 вопроса:</b></p>
+            <p>1. Сколько раз ты купалась в Персидском заливе?</p>
+            <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
+            <p>3. Сколько было комнат в домике на Новый год?</p>
+            <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
         </div>
-        <div class="safe-container">
-            <img src="save.png" alt="Сейф" class="safe-image">
-            <div class="code-inputs">
-                <select id="digit1">
-                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-                </select>
-                <select id="digit2">
-                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-                </select>
-                <select id="digit3">
-                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-                </select>
-                <select id="digit4">
-                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
-                </select>
+        <div class="safe-area" onclick="playMusic()">
+            <img src="save.png" class="safe-img">
+            <div class="digits">
+                <input type="number" class="digit-input" min="0" max="9">
+                <input type="number" class="digit-input" min="0" max="9">
+                <input type="number" class="digit-input" min="0" max="9">
+                <input type="number" class="digit-input" min="0" max="9">
             </div>
         </div>
     </div>
 
     <script>
-        const correctCode = "1234"; // Замените на нужный код
-        const bgMusic = document.getElementById('bgMusic');
-        const victorySound = document.getElementById('victorySound');
-        let musicStarted = false;
-
-        function checkCode() {
-            const code = document.getElementById("digit1").value +
-                         document.getElementById("digit2").value +
-                         document.getElementById("digit3").value +
-                         document.getElementById("digit4").value;
-            if (code === correctCode) {
-                victorySound.play();
-                setTimeout(() => {
-                    window.location.href = "https://lera-birthday.com/win";
-                }, 4000);
+        function playMusic() {
+            const audio = document.getElementById("bg-music");
+            if (audio.paused) {
+                audio.play();
             }
         }
-
-        document.querySelectorAll("select").forEach(select => {
-            select.addEventListener("change", () => {
-                if (!musicStarted) {
-                    bgMusic.play();
-                    musicStarted = true;
-                }
-                checkCode();
-            });
-        });
     </script>
 </body>
 </html>
