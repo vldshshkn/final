@@ -2,90 +2,124 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-  <meta charset="UTF-8" />
-  <title>Волшебный Сейф</title>
-  <style>
-    @font-face {
-      font-family: 'Disney';
-      src: url('ofont.ru_DisneyPark.ttf') format('truetype');
-    }
-    body {
-      margin: 0;
-      font-family: 'Disney', cursive;
-      background: url('BG.jpeg') no-repeat center center fixed;
-      background-size: cover;
-      color: white;
-    }
-    .container {
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      padding: 50px;
-    }
-    .text-box {
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 30px;
-      border-radius: 30px;
-      max-width: 50%;
-      font-size: 1.6em;
-    }
-    h1 {
-      text-align: center;
-      margin-top: 40px;
-      font-size: 2.8em;
-    }
-    .safe {
-      position: relative;
-    }
-    .safe img {
-      width: 450px;
-    }
-    .code {
-      position: absolute;
-      top: 42%;
-      left: 11%;
-      width: 78%;
-      display: flex;
-      justify-content: space-around;
-    }
-    .code select {
-      font-size: 1.2em;
-      padding: 10px;
-      border-radius: 8px;
-    }
-  </style>
+    <meta charset="UTF-8">
+    <title>Волшебный Сейф</title>
+    <style>
+        @font-face {
+            font-family: 'Disney';
+            src: url('ofont.ru_DisneyPark.ttf') format('truetype');
+        }
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Disney', sans-serif;
+            background: url('BG.jpeg') no-repeat center center fixed;
+            background-size: cover;
+        }
+        h1 {
+            text-align: center;
+            font-size: 48px;
+            color: white;
+            margin-top: 30px;
+        }
+        .container {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            margin-top: 30px;
+            padding: 0 5%;
+        }
+        .questions {
+            background-color: rgba(0, 0, 0, 0.4);
+            padding: 25px;
+            border-radius: 30px;
+            color: white;
+            font-size: 24px;
+            line-height: 1.6;
+        }
+        .safe-container {
+            position: relative;
+        }
+        .safe-image {
+            width: 400px;
+        }
+        .code-inputs {
+            position: absolute;
+            top: 55%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            display: flex;
+            gap: 10px;
+        }
+        select {
+            font-size: 24px;
+            text-align: center;
+            -moz-appearance: none;
+            -webkit-appearance: none;
+            appearance: none;
+        }
+    </style>
 </head>
 <body>
-  <h1>Ты молодец! Последний шаг!</h1>
-  <div class="container">
-    <div class="text-box">
-      Чтобы открыть сейф, ответь на 4 вопроса:
-      <br><br>
-      1. Сколько раз ты купалась в Персидском заливе?<br>
-      2. Сколько персонажей было в фильме "Там, где мы были"?<br>
-      3. Сколько было комнат в домике на Новый год?<br>
-      4. Сколько татуировок у Владика? (фото смотреть нельзя!)
+    <audio id="bgMusic" src="BG_sound.mp3" loop></audio>
+    <audio id="victorySound" src="victory_sound.mp3"></audio>
+
+    <h1>Ты молодец! Последний шаг!</h1>
+    <div class="container">
+        <div class="questions">
+            Чтобы открыть сейф, ответь на 4 вопроса:<br><br>
+            1. Сколько раз ты купалась в Персидском заливе?<br>
+            2. Сколько персонажей было в фильме "Там, где мы были"?<br>
+            3. Сколько было комнат в домике на Новый год?<br>
+            4. Сколько татуировок у Владика? (фото смотреть нельзя!)
+        </div>
+        <div class="safe-container">
+            <img src="save.png" alt="Сейф" class="safe-image">
+            <div class="code-inputs">
+                <select id="digit1">
+                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+                </select>
+                <select id="digit2">
+                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+                </select>
+                <select id="digit3">
+                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+                </select>
+                <select id="digit4">
+                    <option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option>
+                </select>
+            </div>
+        </div>
     </div>
-    <div class="safe">
-      <img src="save.png" alt="safe" />
-      <div class="code">
-        <select id="d1"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
-        <select id="d2"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
-        <select id="d3"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
-        <select id="d4"><option>0</option><option>1</option><option>2</option><option>3</option><option>4</option><option>5</option><option>6</option><option>7</option><option>8</option><option>9</option></select>
-      </div>
-    </div>
-  </div>
-  <script>
-    const correct = ['2', '8', '5', '6'];
-    const selects = ['d1', 'd2', 'd3', 'd4'].map(id => document.getElementById(id));
-    selects.forEach(sel => sel.addEventListener('change', checkCode));
-    function checkCode() {
-      if (selects.every((sel, i) => sel.value === correct[i])) {
-        alert("Да! Ты победила!");
-        window.location.href = "https://lera-birthday.com/win";
-      }
-    }
-  </script>
+
+    <script>
+        const correctCode = "1234"; // Замените на нужный код
+        const bgMusic = document.getElementById('bgMusic');
+        const victorySound = document.getElementById('victorySound');
+        let musicStarted = false;
+
+        function checkCode() {
+            const code = document.getElementById("digit1").value +
+                         document.getElementById("digit2").value +
+                         document.getElementById("digit3").value +
+                         document.getElementById("digit4").value;
+            if (code === correctCode) {
+                victorySound.play();
+                setTimeout(() => {
+                    window.location.href = "https://lera-birthday.com/win";
+                }, 4000);
+            }
+        }
+
+        document.querySelectorAll("select").forEach(select => {
+            select.addEventListener("change", () => {
+                if (!musicStarted) {
+                    bgMusic.play();
+                    musicStarted = true;
+                }
+                checkCode();
+            });
+        });
+    </script>
 </body>
 </html>
