@@ -3,7 +3,6 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Волшебный Сейф</title>
   <style>
     @font-face {
@@ -12,132 +11,85 @@
     }
     body {
       margin: 0;
-      padding: 0;
-      font-family: 'DisneyPark', cursive;
+      font-family: 'DisneyPark', sans-serif;
       background: url('BG.jpeg') no-repeat center center fixed;
       background-size: cover;
-      color: white;
+      overflow-x: hidden;
+    }
+    h1 {
       text-align: center;
+      font-size: 40px;
+      color: white;
+      text-shadow: 2px 2px 5px black;
+      margin-top: 20px;
     }
     .container {
-      padding: 20px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      margin-top: 40px;
     }
-    .title {
-      font-size: 3em;
-      text-shadow: 2px 2px 4px #000000;
+    .questions {
+      background-color: rgba(0, 0, 0, 0.4);
+      padding: 30px;
+      border-radius: 20px;
+      color: white;
+      max-width: 500px;
+      margin-right: 40px;
+      font-size: 18px;
     }
-    .question-box {
-      background-color: rgba(0, 0, 0, 0.5);
-      border-radius: 15px;
-      display: inline-block;
-      padding: 20px;
-      margin-top: 20px;
-      font-size: 1.5em;
-    }
-    .safe-box {
-      margin-top: 30px;
+    .safe-area {
       position: relative;
-      display: inline-block;
     }
-    .safe-box img {
+    .safe-image {
       width: 400px;
     }
-    .digit-inputs {
+    .code-inputs {
       position: absolute;
-      top: 50%;
+      top: 48%;
       left: 50%;
-      transform: translate(-50%, -40%);
+      transform: translate(-50%, -50%);
       display: flex;
+      justify-content: center;
       gap: 10px;
     }
-    .digit-inputs select {
-      font-size: 2em;
-      padding: 5px;
-      width: 60px;
-      height: 60px;
+    .code-inputs input {
+      width: 50px;
+      height: 50px;
+      font-size: 24px;
       text-align: center;
+      border-radius: 8px;
+      border: none;
+      box-shadow: 0 0 5px rgba(0,0,0,0.2);
+      appearance: textfield;
+    }
+    .code-inputs input::-webkit-inner-spin-button,
+    .code-inputs input::-webkit-outer-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
     }
   </style>
 </head>
 <body>
   <audio id="bg-music" src="background_music.mp3" autoplay loop></audio>
-  <audio id="victory-sound" src="victory_fanfare.mp3"></audio>
-
+  <h1>Ты молодец! Последний шаг!</h1>
   <div class="container">
-    <div class="title">Ты молодец! Последний шаг!</div>
-    <div class="question-box">
+    <div class="questions">
       <p>Чтобы открыть сейф, ответь на 4 вопроса:</p>
       <p>1. Сколько раз ты купалась в Персидском заливе?</p>
       <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
       <p>3. Сколько было комнат в домике на Новый год?</p>
       <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
     </div>
-
-    <div class="safe-box">
-      <img src="save.png" alt="Сейф" />
-      <div class="digit-inputs">
-        <select id="d1"></select>
-        <select id="d2"></select>
-        <select id="d3"></select>
-        <select id="d4"></select>
+    <div class="safe-area">
+      <img class="safe-image" src="save.png" alt="Сейф">
+      <div class="code-inputs">
+        <input type="number" min="0" max="9">
+        <input type="number" min="0" max="9">
+        <input type="number" min="0" max="9">
+        <input type="number" min="0" max="9">
       </div>
     </div>
   </div>
-
-  <script>
-    const correctCode = ['2', '8', '5', '6'];
-    const selects = ['d1', 'd2', 'd3', 'd4'].map(id => document.getElementById(id));
-
-    selects.forEach((select, idx) => {
-      for (let i = 0; i <= 9; i++) {
-        let option = document.createElement('option');
-        option.value = i;
-        option.text = i;
-        select.appendChild(option);
-      }
-      select.addEventListener('change', checkCode);
-    });
-
-    function checkCode() {
-      const current = selects.map(select => select.value);
-      if (JSON.stringify(current) === JSON.stringify(correctCode)) {
-        document.getElementById('victory-sound').play();
-        confetti();
-        setTimeout(() => {
-          window.location.href = 'https://lera-birthday.com/win';
-        }, 4000);
-      }
-    }
-
-    function confetti() {
-      const duration = 2 * 1000;
-      const end = Date.now() + duration;
-      (function frame() {
-        confettiEffect();
-        if (Date.now() < end) {
-          requestAnimationFrame(frame);
-        }
-      }());
-    }
-
-    function confettiEffect() {
-      const confetti = document.createElement("div");
-      confetti.style.position = "fixed";
-      confetti.style.width = "10px";
-      confetti.style.height = "10px";
-      confetti.style.background = "white";
-      confetti.style.left = Math.random() * window.innerWidth + "px";
-      confetti.style.top = "-10px";
-      confetti.style.opacity = "0.8";
-      confetti.style.zIndex = "9999";
-      confetti.style.transition = "top 2s ease-out, opacity 2s";
-      document.body.appendChild(confetti);
-      setTimeout(() => {
-        confetti.style.top = window.innerHeight + "px";
-        confetti.style.opacity = "0";
-        setTimeout(() => confetti.remove(), 2000);
-      }, 10);
-    }
-  </script>
 </body>
 </html>
