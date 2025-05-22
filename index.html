@@ -3,155 +3,169 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
-  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Волшебный Сейф</title>
-  <link rel="stylesheet" href="style.css">
   <style>
     @font-face {
-      font-family: 'Disney';
+      font-family: 'DisneyPark';
       src: url('ofont.ru_DisneyPark.ttf') format('truetype');
     }
 
     body {
       margin: 0;
       padding: 0;
+      font-family: 'DisneyPark', cursive;
       background: url('BG.jpeg') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'Disney', cursive;
-      color: white;
-    }
-
-    .container {
-      display: flex;
-      justify-content: space-around;
-      align-items: center;
-      height: 100vh;
-      padding: 0 5vw;
-    }
-
-    .questions {
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 30px;
-      border-radius: 20px;
-      font-size: 1.3rem;
-      line-height: 2.2rem;
     }
 
     h1 {
       text-align: center;
-      font-size: 2.5rem;
-      margin-top: 20px;
-      text-shadow: 2px 2px 4px #000;
+      font-size: 48px;
+      color: white;
+      margin-top: 40px;
     }
 
-    .safe {
-      position: relative;
-      width: 400px;
-      height: auto;
-    }
-
-    .safe img {
-      width: 100%;
-      height: auto;
-    }
-
-    .inputs {
-      position: absolute;
-      bottom: 20%;
-      left: 13%;
+    .container {
       display: flex;
-      gap: 10px;
+      justify-content: center;
+      align-items: flex-start;
+      padding: 40px;
+      gap: 50px;
     }
 
-    select {
-      width: 50px;
-      height: 60px;
-      font-size: 1.5rem;
-      border-radius: 10px;
-      text-align: center;
+    .prompt {
+      background-color: rgba(0, 0, 0, 0.5);
+      padding: 30px;
+      border-radius: 20px;
+      color: white;
+      font-size: 24px;
+      line-height: 1.7;
+      max-width: 600px;
     }
 
-    #startMusic {
+    .safe-container {
+      position: relative;
+    }
+
+    .safe-img {
+      width: 400px;
+    }
+
+    .digit-container {
       position: absolute;
-      top: 20px;
-      right: 20px;
-      background: white;
-      color: black;
-      padding: 10px 20px;
-      border: none;
-      border-radius: 12px;
-      font-size: 1rem;
-      cursor: pointer;
-      z-index: 10;
+      bottom: 30px;
+      left: 50%;
+      transform: translateX(-50%);
+      display: flex;
+      gap: 15px;
     }
 
+    input[type="number"] {
+      width: 60px;
+      height: 60px;
+      font-size: 28px;
+      text-align: center;
+      border-radius: 10px;
+      border: 2px solid #ccc;
+      appearance: auto;
+    }
+
+    input::-webkit-inner-spin-button,
+    input::-webkit-outer-spin-button {
+      opacity: 1;
+      appearance: auto;
+    }
+
+    canvas.confetti-canvas {
+      position: fixed;
+      pointer-events: none;
+      top: 0;
+      left: 0;
+      width: 100%;
+      height: 100%;
+      z-index: 9999;
+    }
+
+    audio {
+      display: none;
+    }
   </style>
 </head>
 <body>
-  <button id="startMusic">Включить музыку</button>
   <h1>Ты молодец! Последний шаг!</h1>
   <div class="container">
-    <div class="questions" style="font-size: 20px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
-      Чтобы открыть сейф, ответь на 4 вопроса:<br/><br/>
-      1. Сколько раз ты купалась в Персидском заливе?<br/>
-      2. Сколько персонажей было в фильме "Там, где мы были"?<br/>
-      3. Сколько было комнат в домике на Новый год?<br/>
-      4. Сколько татуировок у Владика? (фото смотреть нельзя!)<br/>
+    <div class="prompt">
+      <strong>Чтобы открыть сейф, ответь на 4 вопроса:</strong><br /><br />
+      1. Сколько раз ты купалась в Персидском заливе?<br />
+      2. Сколько персонажей было в фильме "Там, где мы были"?<br />
+      3. Сколько было комнат в домике на Новый год?<br />
+      4. Сколько татуировок у Владика? (фото смотреть нельзя!)
     </div>
-    <div class="safe">
-      <img src="save.png" alt="safe" />
-      <div class="inputs">
-        <select id="d1"></select>
-        <select id="d2"></select>
-        <select id="d3"></select>
-        <select id="d4"></select>
+    <div class="safe-container">
+      <img src="save.png" alt="Сейф" class="safe-img" />
+      <div class="digit-container">
+        <input type="number" min="0" max="9" id="d1" />
+        <input type="number" min="0" max="9" id="d2" />
+        <input type="number" min="0" max="9" id="d3" />
+        <input type="number" min="0" max="9" id="d4" />
       </div>
     </div>
   </div>
 
-  <audio id="bgMusic" loop>
-    <source src="background_music.mp3" type="audio/mpeg">
-  </audio>
+  <canvas class="confetti-canvas"></canvas>
+  <audio id="bg-music" src="background_music.mp3" loop></audio>
+  <audio id="victory-sound" src="victory_fanfare.mp3"></audio>
 
-  <audio id="victorySound">
-    <source src="victory_fanfare.mp3" type="audio/mpeg">
-  </audio>
-
+  <script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.6.0/dist/confetti.browser.min.js"></script>
   <script>
-    const d1 = document.getElementById('d1');
-    const d2 = document.getElementById('d2');
-    const d3 = document.getElementById('d3');
-    const d4 = document.getElementById('d4');
+    const correctCode = ['2', '8', '5', '6'];
+    let bgStarted = false;
 
-    const options = [...Array(10).keys()].map(i => `<option value="${i}">${i}</option>`).join('');
-    [d1, d2, d3, d4].forEach(d => d.innerHTML = options);
+    document.body.addEventListener('click', () => {
+      if (!bgStarted) {
+        document.getElementById('bg-music').play();
+        bgStarted = true;
+      }
+    });
 
-    const correct = [2, 8, 5, 6];
-    const fanfare = document.getElementById("victorySound");
+    const inputs = ['d1', 'd2', 'd3', 'd4'].map(id => document.getElementById(id));
 
-    [d1, d2, d3, d4].forEach(select => {
-      select.addEventListener('change', () => {
-        if (
-          +d1.value === correct[0] &&
-          +d2.value === correct[1] &&
-          +d3.value === correct[2] &&
-          +d4.value === correct[3]
-        ) {
-          fanfare.play();
+    inputs.forEach(input => {
+      input.addEventListener('input', () => {
+        const enteredCode = inputs.map(i => i.value);
+        if (JSON.stringify(enteredCode) === JSON.stringify(correctCode)) {
+          document.getElementById('victory-sound').play();
+          confetti();
           setTimeout(() => {
-            window.location.href = "https://lera-birthday.com/win";
+            window.location.href = 'https://lera-birthday.com/win';
           }, 3000);
         }
       });
     });
 
-    const bgMusic = document.getElementById("bgMusic");
-    const musicButton = document.getElementById("startMusic");
+    function confetti() {
+      const duration = 2 * 1000;
+      const end = Date.now() + duration;
+      (function frame() {
+        confettiLib({
+          particleCount: 5,
+          angle: 60,
+          spread: 55,
+          origin: { x: 0 },
+        });
+        confettiLib({
+          particleCount: 5,
+          angle: 120,
+          spread: 55,
+          origin: { x: 1 },
+        });
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
+        }
+      })();
+    }
 
-    musicButton.addEventListener("click", () => {
-      bgMusic.play();
-      musicButton.style.display = "none";
-    });
+    const confettiLib = window.confetti.create(document.querySelector(".confetti-canvas"), { resize: true });
   </script>
 </body>
 </html>
