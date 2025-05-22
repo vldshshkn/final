@@ -3,174 +3,140 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Волшебный Сейф</title>
   <style>
     @font-face {
       font-family: 'DisneyPark';
       src: url('ofont.ru_DisneyPark.ttf') format('truetype');
     }
-
     body {
       margin: 0;
       padding: 0;
+      font-family: 'DisneyPark', cursive;
       background: url('BG.jpeg') no-repeat center center fixed;
       background-size: cover;
-      font-family: 'DisneyPark', sans-serif;
       color: white;
       text-align: center;
     }
-    h1 {
-      margin-top: 30px;
-      font-size: 44px;
-      text-shadow: 2px 2px 5px black;
-    }
-    .questions {
-      background-color: rgba(0, 0, 0, 0.4);
-      margin: 20px auto;
+    .container {
       padding: 20px;
+    }
+    .title {
+      font-size: 3em;
+      text-shadow: 2px 2px 4px #000000;
+    }
+    .question-box {
+      background-color: rgba(0, 0, 0, 0.5);
       border-radius: 15px;
-      width: 90%;
-      max-width: 720px;
-      font-size: 20px;
+      display: inline-block;
+      padding: 20px;
+      margin-top: 20px;
+      font-size: 1.5em;
     }
-    .safe {
+    .safe-box {
+      margin-top: 30px;
       position: relative;
-      margin: 0 auto;
-      margin-top: 0;
-      width: 500px;
+      display: inline-block;
     }
-    .safe img {
-      width: 100%;
+    .safe-box img {
+      width: 400px;
     }
-    .digits {
+    .digit-inputs {
       position: absolute;
-      top: 53%;
+      top: 50%;
       left: 50%;
-      transform: translate(-50%, -50%);
+      transform: translate(-50%, -40%);
       display: flex;
-      gap: 15px;
+      gap: 10px;
     }
-    .digits input {
+    .digit-inputs select {
+      font-size: 2em;
+      padding: 5px;
       width: 60px;
-      height: 80px;
-      font-size: 36px;
+      height: 60px;
       text-align: center;
-      border-radius: 10px;
-    }
-    canvas.confetti {
-      position: fixed;
-      top: 0;
-      left: 0;
-      width: 100vw;
-      height: 100vh;
-      pointer-events: none;
-      z-index: 9999;
     }
   </style>
 </head>
 <body>
-  <h1>Ты молодец! Последний шаг!</h1>
-  <div class="questions">
-    <p>Чтобы открыть сейф, ответь на 4 вопроса:</p>
-    <p>1. Сколько раз ты купалась в Персидском заливе?</p>
-    <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
-    <p>3. Сколько было комнат в домике на Новый год?</p>
-    <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
-  </div>
+  <audio id="bg-music" src="background_music.mp3" autoplay loop></audio>
+  <audio id="victory-sound" src="victory_fanfare.mp3"></audio>
 
-  <div class="safe">
-    <img src="save.png" alt="Сейф" />
-    <div class="digits">
-      <input type="number" min="0" max="9" id="digit1">
-      <input type="number" min="0" max="9" id="digit2">
-      <input type="number" min="0" max="9" id="digit3">
-      <input type="number" min="0" max="9" id="digit4">
+  <div class="container">
+    <div class="title">Ты молодец! Последний шаг!</div>
+    <div class="question-box">
+      <p>Чтобы открыть сейф, ответь на 4 вопроса:</p>
+      <p>1. Сколько раз ты купалась в Персидском заливе?</p>
+      <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
+      <p>3. Сколько было комнат в домике на Новый год?</p>
+      <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
+    </div>
+
+    <div class="safe-box">
+      <img src="save.png" alt="Сейф" />
+      <div class="digit-inputs">
+        <select id="d1"></select>
+        <select id="d2"></select>
+        <select id="d3"></select>
+        <select id="d4"></select>
+      </div>
     </div>
   </div>
 
-  <canvas class="confetti" id="confetti"></canvas>
-
-  <audio id="bgMusic" src="background_music.mp3" loop></audio>
-  <audio id="victory" src="victory_fanfare.mp3"></audio>
-
   <script>
-    window.addEventListener('load', () => {
-      const music = document.getElementById('bgMusic');
-      const play = () => {
-        music.volume = 0.5;
-        music.play().catch(err => console.log('Автостарт заблокирован'));
-        document.removeEventListener('click', play);
-      };
-      document.addEventListener('click', play);
+    const correctCode = ['2', '8', '5', '6'];
+    const selects = ['d1', 'd2', 'd3', 'd4'].map(id => document.getElementById(id));
+
+    selects.forEach((select, idx) => {
+      for (let i = 0; i <= 9; i++) {
+        let option = document.createElement('option');
+        option.value = i;
+        option.text = i;
+        select.appendChild(option);
+      }
+      select.addEventListener('change', checkCode);
     });
 
-    const correctCode = "2856";
-    const inputs = [
-      document.getElementById('digit1'),
-      document.getElementById('digit2'),
-      document.getElementById('digit3'),
-      document.getElementById('digit4')
-    ];
-    inputs.forEach(input => input.addEventListener('change', checkCode));
-
     function checkCode() {
-      const enteredCode = inputs.map(i => i.value).join('');
-      if (enteredCode === correctCode) {
-        document.getElementById('victory').play();
-        launchConfetti();
+      const current = selects.map(select => select.value);
+      if (JSON.stringify(current) === JSON.stringify(correctCode)) {
+        document.getElementById('victory-sound').play();
+        confetti();
         setTimeout(() => {
-          window.location.href = "https://lera-birthday.com/win";
-        }, 3500);
+          window.location.href = 'https://lera-birthday.com/win';
+        }, 4000);
       }
     }
 
-    function launchConfetti() {
-      const canvas = document.getElementById('confetti');
-      const ctx = canvas.getContext('2d');
-      canvas.width = window.innerWidth;
-      canvas.height = window.innerHeight;
-
-      const pieces = Array.from({ length: 150 }, () => ({
-        x: Math.random() * canvas.width,
-        y: Math.random() * canvas.height - canvas.height,
-        r: Math.random() * 6 + 4,
-        d: Math.random() * 30 + 10,
-        color: `hsl(${Math.random() * 360}, 100%, 70%)`,
-        tilt: Math.random() * 10 - 10,
-        tiltAngleIncrement: Math.random() * 0.1 + 0.05,
-        tiltAngle: 0,
-      }));
-
-      function draw() {
-        ctx.clearRect(0, 0, canvas.width, canvas.height);
-        for (const p of pieces) {
-          ctx.beginPath();
-          ctx.lineWidth = p.r / 2;
-          ctx.strokeStyle = p.color;
-          ctx.moveTo(p.x + p.tilt + p.r / 4, p.y);
-          ctx.lineTo(p.x + p.tilt, p.y + p.tilt + p.r);
-          ctx.stroke();
+    function confetti() {
+      const duration = 2 * 1000;
+      const end = Date.now() + duration;
+      (function frame() {
+        confettiEffect();
+        if (Date.now() < end) {
+          requestAnimationFrame(frame);
         }
-        update();
-      }
+      }());
+    }
 
-      function update() {
-        for (const p of pieces) {
-          p.tiltAngle += p.tiltAngleIncrement;
-          p.y += (Math.cos(p.d) + 3 + p.r / 2) / 2;
-          p.tilt = Math.sin(p.tiltAngle) * 15;
-
-          if (p.y > canvas.height) {
-            p.y = -20;
-            p.x = Math.random() * canvas.width;
-          }
-        }
-      }
-
-      (function animate() {
-        draw();
-        requestAnimationFrame(animate);
-      })();
+    function confettiEffect() {
+      const confetti = document.createElement("div");
+      confetti.style.position = "fixed";
+      confetti.style.width = "10px";
+      confetti.style.height = "10px";
+      confetti.style.background = "white";
+      confetti.style.left = Math.random() * window.innerWidth + "px";
+      confetti.style.top = "-10px";
+      confetti.style.opacity = "0.8";
+      confetti.style.zIndex = "9999";
+      confetti.style.transition = "top 2s ease-out, opacity 2s";
+      document.body.appendChild(confetti);
+      setTimeout(() => {
+        confetti.style.top = window.innerHeight + "px";
+        confetti.style.opacity = "0";
+        setTimeout(() => confetti.remove(), 2000);
+      }, 10);
     }
   </script>
 </body>
