@@ -3,93 +3,155 @@
 <html lang="ru">
 <head>
   <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
   <title>Волшебный Сейф</title>
+  <link rel="stylesheet" href="style.css">
   <style>
     @font-face {
-      font-family: 'DisneyPark';
+      font-family: 'Disney';
       src: url('ofont.ru_DisneyPark.ttf') format('truetype');
     }
+
     body {
       margin: 0;
-      font-family: 'DisneyPark', sans-serif;
+      padding: 0;
       background: url('BG.jpeg') no-repeat center center fixed;
       background-size: cover;
-      overflow-x: hidden;
-    }
-    h1 {
-      text-align: center;
-      font-size: 40px;
+      font-family: 'Disney', cursive;
       color: white;
-      text-shadow: 2px 2px 5px black;
-      margin-top: 20px;
     }
+
     .container {
       display: flex;
-      justify-content: center;
+      justify-content: space-around;
       align-items: center;
-      margin-top: 40px;
+      height: 100vh;
+      padding: 0 5vw;
     }
+
     .questions {
       background-color: rgba(0, 0, 0, 0.4);
       padding: 30px;
       border-radius: 20px;
-      color: white;
-      max-width: 500px;
-      margin-right: 40px;
-      font-size: 18px;
+      font-size: 1.3rem;
+      line-height: 2.2rem;
     }
-    .safe-area {
+
+    h1 {
+      text-align: center;
+      font-size: 2.5rem;
+      margin-top: 20px;
+      text-shadow: 2px 2px 4px #000;
+    }
+
+    .safe {
       position: relative;
-    }
-    .safe-image {
       width: 400px;
+      height: auto;
     }
-    .code-inputs {
+
+    .safe img {
+      width: 100%;
+      height: auto;
+    }
+
+    .inputs {
       position: absolute;
-      top: 48%;
-      left: 50%;
-      transform: translate(-50%, -50%);
+      bottom: 20%;
+      left: 13%;
       display: flex;
-      justify-content: center;
       gap: 10px;
     }
-    .code-inputs input {
+
+    select {
       width: 50px;
-      height: 50px;
-      font-size: 24px;
+      height: 60px;
+      font-size: 1.5rem;
+      border-radius: 10px;
       text-align: center;
-      border-radius: 8px;
+    }
+
+    #startMusic {
+      position: absolute;
+      top: 20px;
+      right: 20px;
+      background: white;
+      color: black;
+      padding: 10px 20px;
       border: none;
-      box-shadow: 0 0 5px rgba(0,0,0,0.2);
-      appearance: textfield;
+      border-radius: 12px;
+      font-size: 1rem;
+      cursor: pointer;
+      z-index: 10;
     }
-    .code-inputs input::-webkit-inner-spin-button,
-    .code-inputs input::-webkit-outer-spin-button {
-      -webkit-appearance: none;
-      margin: 0;
-    }
+
   </style>
 </head>
 <body>
-  <audio id="bg-music" src="background_music.mp3" autoplay loop></audio>
+  <button id="startMusic">Включить музыку</button>
   <h1>Ты молодец! Последний шаг!</h1>
   <div class="container">
-    <div class="questions">
-      <p>Чтобы открыть сейф, ответь на 4 вопроса:</p>
-      <p>1. Сколько раз ты купалась в Персидском заливе?</p>
-      <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
-      <p>3. Сколько было комнат в домике на Новый год?</p>
-      <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
+    <div class="questions" style="font-size: 20px; font-weight: bold; color: white; text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.6);">
+      Чтобы открыть сейф, ответь на 4 вопроса:<br/><br/>
+      1. Сколько раз ты купалась в Персидском заливе?<br/>
+      2. Сколько персонажей было в фильме "Там, где мы были"?<br/>
+      3. Сколько было комнат в домике на Новый год?<br/>
+      4. Сколько татуировок у Владика? (фото смотреть нельзя!)<br/>
     </div>
-    <div class="safe-area">
-      <img class="safe-image" src="save.png" alt="Сейф">
-      <div class="code-inputs">
-        <input type="number" min="0" max="9">
-        <input type="number" min="0" max="9">
-        <input type="number" min="0" max="9">
-        <input type="number" min="0" max="9">
+    <div class="safe">
+      <img src="save.png" alt="safe" />
+      <div class="inputs">
+        <select id="d1"></select>
+        <select id="d2"></select>
+        <select id="d3"></select>
+        <select id="d4"></select>
       </div>
     </div>
   </div>
+
+  <audio id="bgMusic" loop>
+    <source src="background_music.mp3" type="audio/mpeg">
+  </audio>
+
+  <audio id="victorySound">
+    <source src="victory_fanfare.mp3" type="audio/mpeg">
+  </audio>
+
+  <script>
+    const d1 = document.getElementById('d1');
+    const d2 = document.getElementById('d2');
+    const d3 = document.getElementById('d3');
+    const d4 = document.getElementById('d4');
+
+    const options = [...Array(10).keys()].map(i => `<option value="${i}">${i}</option>`).join('');
+    [d1, d2, d3, d4].forEach(d => d.innerHTML = options);
+
+    const correct = [2, 8, 5, 6];
+    const fanfare = document.getElementById("victorySound");
+
+    [d1, d2, d3, d4].forEach(select => {
+      select.addEventListener('change', () => {
+        if (
+          +d1.value === correct[0] &&
+          +d2.value === correct[1] &&
+          +d3.value === correct[2] &&
+          +d4.value === correct[3]
+        ) {
+          fanfare.play();
+          setTimeout(() => {
+            window.location.href = "https://lera-birthday.com/win";
+          }, 3000);
+        }
+      });
+    });
+
+    const bgMusic = document.getElementById("bgMusic");
+    const musicButton = document.getElementById("startMusic");
+
+    musicButton.addEventListener("click", () => {
+      bgMusic.play();
+      musicButton.style.display = "none";
+    });
+  </script>
 </body>
 </html>
