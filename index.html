@@ -2,96 +2,170 @@
 <!DOCTYPE html>
 <html lang="ru">
 <head>
-    <meta charset="UTF-8">
-    <title>Волшебный Сейф</title>
-    <style>
-        body {
-            margin: 0;
-            font-family: 'DisneyPark', sans-serif;
-            background: url('BG.jpeg') no-repeat center center fixed;
-            background-size: cover;
-        }
-        @font-face {
-            font-family: 'DisneyPark';
-            src: url('ofont.ru_DisneyPark.ttf') format('truetype');
-        }
-        .container {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            height: 100vh;
-            padding: 50px;
-            box-sizing: border-box;
-        }
-        .left-panel {
-            background-color: rgba(0, 0, 0, 0.4);
-            border-radius: 25px;
-            padding: 30px;
-            color: white;
-            font-size: 24px;
-            width: 40%;
-        }
-        .title {
-            text-align: center;
-            font-size: 48px;
-            color: white;
-            margin-top: 20px;
-        }
-        .safe-area {
-            position: relative;
-            width: 500px;
-        }
-        .safe-img {
-            width: 100%;
-            height: auto;
-        }
-        .digits {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            display: flex;
-            gap: 10px;
-        }
-        .digit-input {
-            width: 60px;
-            height: 60px;
-            font-size: 32px;
-            text-align: center;
-        }
-    </style>
+  <meta charset="UTF-8" />
+  <title>Волшебный Сейф</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'DisneyPark', sans-serif;
+      background-image: url('BG.jpeg');
+      background-size: cover;
+      background-repeat: no-repeat;
+      background-position: center;
+      overflow: hidden;
+    }
+    @font-face {
+      font-family: 'DisneyPark';
+      src: url('ofont.ru_DisneyPark.ttf') format('truetype');
+    }
+    h1 {
+      text-align: center;
+      color: white;
+      font-size: 3em;
+      margin-top: 30px;
+      text-shadow: 2px 2px 4px #000;
+    }
+    .container {
+      display: flex;
+      justify-content: center;
+      align-items: flex-start;
+      margin-top: 40px;
+      padding: 20px;
+    }
+    .question-box {
+      background-color: rgba(0, 0, 0, 0.4);
+      color: white;
+      padding: 30px;
+      border-radius: 30px;
+      font-size: 1.3em;
+      width: 500px;
+      margin-right: 60px;
+    }
+    .safe-container {
+      position: relative;
+    }
+    .safe {
+      width: 400px;
+    }
+    .code-inputs {
+      position: absolute;
+      top: 46%;
+      left: 15%;
+      display: flex;
+      gap: 10px;
+      transform: translateY(-50%);
+    }
+    .code-inputs select {
+      font-size: 1.5em;
+      padding: 10px;
+      width: 60px;
+      height: 60px;
+      text-align: center;
+    }
+    canvas {
+      position: fixed;
+      top: 0;
+      left: 0;
+      pointer-events: none;
+    }
+  </style>
 </head>
 <body>
-    <audio id="bg-music" src="BG_sound.mp3" loop></audio>
-    <audio id="victory-sound" src="victory_sound.mp3"></audio>
 
-    <div class="title">Ты молодец! Последний шаг!</div>
-    <div class="container">
-        <div class="left-panel">
-            <p><b>Чтобы открыть сейф, ответь на 4 вопроса:</b></p>
-            <p>1. Сколько раз ты купалась в Персидском заливе?</p>
-            <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
-            <p>3. Сколько было комнат в домике на Новый год?</p>
-            <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
-        </div>
-        <div class="safe-area" onclick="playMusic()">
-            <img src="save.png" class="safe-img">
-            <div class="digits">
-                <input type="number" class="digit-input" min="0" max="9">
-                <input type="number" class="digit-input" min="0" max="9">
-                <input type="number" class="digit-input" min="0" max="9">
-                <input type="number" class="digit-input" min="0" max="9">
-            </div>
-        </div>
+<audio id="backgroundMusic" src="BG_sound.mp3" loop></audio>
+<audio id="victorySound" src="victory_sound.mp3"></audio>
+
+<h1>Ты молодец! Последний шаг!</h1>
+
+<div class="container">
+  <div class="question-box">
+    <p>Чтобы открыть сейф, ответь на 4 вопроса:</p>
+    <ol>
+      <li>Сколько раз ты купалась в Персидском заливе?</li>
+      <li>Сколько персонажей было в фильме "Там, где мы были"?</li>
+      <li>Сколько было комнат в домике на Новый год?</li>
+      <li>Сколько татуировок у Владика? (фото смотреть нельзя!)</li>
+    </ol>
+  </div>
+  <div class="safe-container">
+    <img class="safe" src="save.png" alt="Сейф">
+    <div class="code-inputs">
+      <select id="digit1" onchange="checkCode()"></select>
+      <select id="digit2" onchange="checkCode()"></select>
+      <select id="digit3" onchange="checkCode()"></select>
+      <select id="digit4" onchange="checkCode()"></select>
     </div>
+  </div>
+</div>
 
-    <script>
-        function playMusic() {
-            const audio = document.getElementById("bg-music");
-            if (audio.paused) {
-                audio.play();
-            }
-        }
-    </script>
+<canvas id="confetti"></canvas>
+
+<script src="https://cdn.jsdelivr.net/npm/canvas-confetti@1.4.0/dist/confetti.browser.min.js"></script>
+<script>
+  const digits = [digit1, digit2, digit3, digit4];
+
+  digits.forEach(d => {
+    for (let i = 0; i < 10; i++) {
+      const opt = document.createElement('option');
+      opt.value = i;
+      opt.innerText = i;
+      d.appendChild(opt);
+    }
+  });
+
+  let musicStarted = false;
+  document.body.addEventListener('click', () => {
+    if (!musicStarted) {
+      document.getElementById('backgroundMusic').play();
+      musicStarted = true;
+    }
+  });
+
+  function checkCode() {
+    const d1 = parseInt(digit1.value);
+    const d2 = parseInt(digit2.value);
+    const d3 = parseInt(digit3.value);
+    const d4 = parseInt(digit4.value);
+    const code = `${d1}${d2}${d3}${d4}`;
+    if (code === '2856') {
+      document.getElementById('victorySound').play();
+      confetti();
+      setTimeout(() => {
+        window.location.href = "http://lera-birthday.com/win";
+      }, 2500);
+    }
+  }
+
+  function confetti() {
+    const duration = 2 * 1000;
+    const animationEnd = Date.now() + duration;
+    const defaults = { startVelocity: 30, spread: 360, ticks: 60, zIndex: 1000 };
+
+    function randomInRange(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    const interval = setInterval(function () {
+      const timeLeft = animationEnd - Date.now();
+
+      if (timeLeft <= 0) {
+        return clearInterval(interval);
+      }
+
+      const particleCount = 50 * (timeLeft / duration);
+      confettiLib(Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.1, 0.3), y: Math.random() - 0.2 }
+      }));
+      confettiLib(Object.assign({}, defaults, {
+        particleCount,
+        origin: { x: randomInRange(0.7, 0.9), y: Math.random() - 0.2 }
+      }));
+    }, 250);
+  }
+
+  const confettiLib = window.confetti;
+</script>
+
 </body>
 </html>
