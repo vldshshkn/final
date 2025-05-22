@@ -85,13 +85,7 @@
 
   <canvas class="confetti" id="confetti"></canvas>
 
-  <audio id="bgMusic" src="background_music.mp3" loop></audio>
-  <script>
-    document.addEventListener("click", () => {
-      const bg = document.getElementById("bgMusic");
-      if (bg.paused) bg.play();
-    });
-  </script>
+  <audio id="bgMusic" src="background_music.mp3" autoplay loop></audio>
   <audio id="victory" src="victory_fanfare.mp3"></audio>
 
   <script>
