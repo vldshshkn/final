@@ -1,0 +1,150 @@
+
+<!DOCTYPE html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8" />
+  <title>Волшебный Сейф</title>
+  <style>
+    body {
+      margin: 0;
+      padding: 0;
+      background: url('BG.jpeg') no-repeat center center fixed;
+      background-size: cover;
+      font-family: 'Arial', sans-serif;
+      color: white;
+      text-align: center;
+    }
+    h1 {
+      margin-top: 40px;
+      font-size: 36px;
+      text-shadow: 2px 2px 5px black;
+    }
+    .questions {
+      background-color: rgba(0, 0, 0, 0.4);
+      margin: 20px auto;
+      padding: 20px;
+      border-radius: 15px;
+      width: 80%;
+      max-width: 700px;
+      font-size: 18px;
+    }
+    .safe {
+      position: relative;
+      margin: 0 auto;
+      margin-top: 40px;
+      width: 360px;
+    }
+    .safe img {
+      width: 100%;
+    }
+    .digits {
+      position: absolute;
+      top: 52%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      display: flex;
+      gap: 10px;
+    }
+    .digits input {
+      width: 40px;
+      height: 60px;
+      font-size: 30px;
+      text-align: center;
+      border-radius: 8px;
+    }
+    canvas.confetti {
+      position: fixed;
+      top: 0;
+      left: 0;
+      width: 100vw;
+      height: 100vh;
+      pointer-events: none;
+      z-index: 9999;
+    }
+  </style>
+</head>
+<body>
+  <h1>Ты молодец! Последний шаг!</h1>
+  <div class="questions">
+    <p>Чтобы открыть сейф, ответь на 4 вопроса:</p>
+    <p>1. Сколько раз ты купалась в Персидском заливе?</p>
+    <p>2. Сколько персонажей было в фильме "Там, где мы были"?</p>
+    <p>3. Сколько было комнат в домике на Новый год?</p>
+    <p>4. Сколько татуировок у Владика? (фото смотреть нельзя!)</p>
+  </div>
+
+  <div class="safe">
+    <img src="save.png" alt="Сейф" />
+    <div class="digits">
+      <input type="number" min="0" max="9" id="digit1">
+      <input type="number" min="0" max="9" id="digit2">
+      <input type="number" min="0" max="9" id="digit3">
+      <input type="number" min="0" max="9" id="digit4">
+    </div>
+  </div>
+
+  <canvas class="confetti" id="confetti"></canvas>
+
+  <audio id="bgMusic" src="background_music.mp3" autoplay loop></audio>
+  <audio id="victory" src="victory_fanfare.mp3"></audio>
+
+  <script>
+    const correctCode = "2856";
+    const inputs = [
+      document.getElementById('digit1'),
+      document.getElementById('digit2'),
+      document.getElementById('digit3'),
+      document.getElementById('digit4')
+    ];
+    inputs.forEach(input => input.addEventListener('change', checkCode));
+
+    function checkCode() {
+      const enteredCode = inputs.map(i => i.value).join('');
+      if (enteredCode === correctCode) {
+        document.getElementById('victory').play();
+        launchConfetti();
+        setTimeout(() => {
+          window.location.href = "https://lera-birthday.com/win";
+        }, 3500);
+      }
+    }
+
+    function launchConfetti() {
+      const canvas = document.getElementById('confetti');
+      const ctx = canvas.getContext('2d');
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+
+      const particles = Array.from({ length: 150 }, () => ({
+        x: Math.random() * canvas.width,
+        y: Math.random() * canvas.height,
+        r: Math.random() * 6 + 4,
+        d: Math.random() * 100,
+        color: `hsl(${Math.random() * 360}, 100%, 50%)`,
+        tilt: Math.random() * 10 - 5
+      }));
+
+      function draw() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => {
+          ctx.beginPath();
+          ctx.arc(p.x, p.y, p.r, 0, Math.PI * 2);
+          ctx.fillStyle = p.color;
+          ctx.fill();
+        });
+        update();
+      }
+
+      function update() {
+        particles.forEach(p => {
+          p.y += 2;
+          if (p.y > canvas.height) p.y = -10;
+        });
+      }
+
+      const interval = setInterval(draw, 30);
+      setTimeout(() => clearInterval(interval), 3000);
+    }
+  </script>
+</body>
+</html>
